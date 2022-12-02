@@ -28,7 +28,7 @@ def solve1(rounds):
     return total
 
 
-def solve2(elves):
+def solve2(rounds):
     scores = {
         ('A', 'X'): LOSS + SCISSORS,
         ('A', 'Y'): TIE + ROCK,
