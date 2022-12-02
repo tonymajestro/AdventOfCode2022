@@ -1,7 +1,5 @@
 import sys
 
-shapes = {'X': 1, 'Y': 2, 'Z': 3}
-
 def solve1(rounds):
     scores = {
         ('A', 'X'): 4, # Tie against rock with rock
