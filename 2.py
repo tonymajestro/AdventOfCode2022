@@ -1,16 +1,24 @@
 import sys
 
+ROCK = 1
+PAPER = 2
+SCISSORS = 3
+
+LOSS = 0
+TIE = 3
+WIN = 6
+
 def solve1(rounds):
     scores = {
-        ('A', 'X'): 4, # Tie against rock with rock
-        ('A', 'Y'): 8, # Win against rock with paper
-        ('A', 'Z'): 3, # Lose against rock with scissors
-        ('B', 'X'): 1, # Lose against paper with rock
-        ('B', 'Y'): 5, # Tie against paper with paper
-        ('B', 'Z'): 9, # Win against paper with scissors
-        ('C', 'X'): 7, # Win against scissors with rock
-        ('C', 'Y'): 2, # Lose against scissors with paper
-        ('C', 'Z'): 6, # Tie against scissors with scissors
+        ('A', 'X'): TIE + ROCK,
+        ('A', 'Y'): WIN + PAPER,
+        ('A', 'Z'): LOSS + SCISSORS,
+        ('B', 'X'): LOSS + ROCK,
+        ('B', 'Y'): TIE + PAPER,
+        ('B', 'Z'): WIN + SCISSORS,
+        ('C', 'X'): WIN + ROCK,
+        ('C', 'Y'): LOSS + PAPER,
+        ('C', 'Z'): TIE + SCISSORS
     }
 
     total = 0
@@ -22,15 +30,15 @@ def solve1(rounds):
 
 def solve2(elves):
     scores = {
-        ('A', 'X'): 3, # Lose against rock with scissors
-        ('A', 'Y'): 4, # Tie against rock with rock
-        ('A', 'Z'): 8, # Win against rock with paper
-        ('B', 'X'): 1, # Lose against paper with rock
-        ('B', 'Y'): 5, # Tie against paper with paper
-        ('B', 'Z'): 9, # Win against paper with scissors
-        ('C', 'X'): 2, # Lose against scissors with paper
-        ('C', 'Y'): 6, # Tie against scissors with scissors
-        ('C', 'Z'): 7, # Win against scissors with rock
+        ('A', 'X'): LOSS + SCISSORS,
+        ('A', 'Y'): TIE + ROCK,
+        ('A', 'Z'): WIN + PAPER,
+        ('B', 'X'): LOSS + ROCK,
+        ('B', 'Y'): TIE + PAPER,
+        ('B', 'Z'): WIN + SCISSORS,
+        ('C', 'X'): LOSS + PAPER,
+        ('C', 'Y'): TIE + SCISSORS,
+        ('C', 'Z'): WIN + ROCK
     }
 
     total = 0
@@ -45,9 +53,4 @@ if __name__ == '__main__':
         exit(1)
 
     rounds = [line.rstrip() for line in open(sys.argv[1]).readlines()]
-    print(solve2(rounds))
-            
-        
-
-
-
+    print(solve1(rounds))
