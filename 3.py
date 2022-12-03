@@ -3,6 +3,11 @@
 import string
 import sys
 
+def priority(c):
+    # string.ascii_letters -> 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    # position in string.ascii_letters + 1 represents the priority for the item
+    return string.ascii_letters.find(c) + 1
+
 def solve1(rucksacks):
     total = 0
     for rucksack in rucksacks:
@@ -10,9 +15,7 @@ def solve1(rucksacks):
         compartment2 = set(rucksack[len(rucksack) // 2:])
         intersection = compartment1.intersection(compartment2)
 
-        # string.ascii_letters -> 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        # position in string.ascii_letters + 1 represents the priority for the item
-        total += sum(string.ascii_letters.find(c) + 1 for c in intersection)
+        total += sum(priority(c) for c in intersection)
 
     return total
 
@@ -22,7 +25,7 @@ def solve2(rucksacks):
         group = rucksacks[i*3 : i*3 + 3]
         elf1, elf2, elf3 = [set(rucksack) for rucksack in group]
         intersection = elf1.intersection(elf2).intersection(elf3)
-        total += sum(string.ascii_letters.find(c) + 1 for c in intersection)
+        total += sum(priority(c) for c in intersection)
 
     return total
 
