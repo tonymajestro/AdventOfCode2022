@@ -23,7 +23,7 @@ def solve1(rounds):
 
     total = 0
     for r in rounds:
-        player1, player2 = r.split()
+        player1, player2 = r
         total += scores[(player1, player2)]
     return total
 
@@ -43,7 +43,7 @@ def solve2(rounds):
 
     total = 0
     for r in rounds:
-        player1, end = r.split()
+        player1, end = r
         total += scores[(player1, end)]
     return total
 
@@ -52,5 +52,5 @@ if __name__ == '__main__':
         print("Error: Input file required", file=sys.stderr)
         exit(1)
 
-    rounds = [line.rstrip() for line in open(sys.argv[1]).readlines()]
-    print(solve1(rounds))
+    rounds = [line.rstrip().split() for line in open(sys.argv[1]).readlines()]
+    print(solve2(rounds))
