@@ -1,7 +1,6 @@
-# https://adventofcode.com/2022/day/8
+# https://adventofcode.com/2022/day/9
 
 import sys
-import pdb
 
 class Point(object):
     def __init__(self, x=0, y=0):
