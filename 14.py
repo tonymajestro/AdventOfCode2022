@@ -3,6 +3,8 @@
 import sys
 
 INFINITY = 1000000
+OUT_OF_BOUNDS = -1000000
+VALID = 1
 
 class Point(object):
     def __init__(self, x, y):
@@ -11,6 +13,9 @@ class Point(object):
 
     def __str__(self):
         return f'{self.x}, {self.y}'
+    
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
 
 def debug(grid):
     for j in range(len(grid[0])):
@@ -51,13 +56,10 @@ def parseGrid(lines):
     for line in rocks:
         for point in line:
             point.x -= minX
-            print(point)
 
     # Initialize grid
     numColumns = maxX - minX
-    grid = [['.' for j in range(numColumns + 1)] for i in range(maxY + 1)]
-    print(len(grid))
-    print(len(grid[0]))
+    grid = [['.' for j in range(maxY + 1)] for i in range(numColumns + 1)]
 
     # Fill in all rock points
     for rockLine in rocks:
@@ -68,15 +70,43 @@ def parseGrid(lines):
     sandStart = Point(500 - minX, 0)
     return grid, sandStart
 
+def extendGridForPart2(grid, sandStart):
+    # Compute location of infinite floor
+    maxRockY = 0
+    for j in range(len(grid[0])):
+        for i in range(len(grid)):
+            if grid[i][j] == '#':
+                maxRockY = max(maxRockY, j)
+
+    # Extend grid in Y direction if needed to handle new infinite floor
+    floorY = maxRockY + 2
+    if floorY >= len(grid[0]):
+        for column in grid:
+            column.extend(['.', '.'])
+
+    # Extend grid in both x directions to enable an infinite floor
+    extendedLength = 200
+    extendedLeft = [['.' for j in range(len(grid[0]))] for i in range(extendedLength)]
+    extendedRight = [['.' for j in range(len(grid[0]))] for i in range(extendedLength)]
+    grid = extendedLeft + grid + extendedRight
+
+    # Create infinite floor
+    for i in range(len(grid)):
+        grid[i][floorY] = '#'
+
+    newSandStart = Point(sandStart.x + extendedLength, sandStart.y)
+    return grid, newSandStart
+
 def checkSand(grid, sandPoint):
-    return (0 <= sandPoint.x < len(grid) and
-            0 <= sandPoint.y < len(grid[0]) and
-            grid[sandPoint.x][sandPoint.y] != '#')
+    if sandPoint.x < 0 or sandPoint.x >= len(grid) or sandPoint.y >= len(grid[0]):
+        return True
+
+    return grid[sandPoint.x][sandPoint.y] not in ('#', 'o')
 
 def simulate(grid, sandPoint):
     down = Point(sandPoint.x, sandPoint.y + 1)
     downLeft = Point(sandPoint.x - 1, sandPoint.y + 1)
-    downRight = Point(sandPoint.x - 1, sandPoint.y + 1)
+    downRight = Point(sandPoint.x + 1, sandPoint.y + 1)
 
     if checkSand(grid, down):
         return down
@@ -88,8 +118,42 @@ def simulate(grid, sandPoint):
         return sandPoint
 
 def solve1(grid, sandStart):
+    currentSandPoint = Point(sandStart.x, sandStart.y)
+    sandCount = 0
 
+    while True:
+        newSandPoint = simulate(grid, currentSandPoint)
+        if newSandPoint.x < 0 or newSandPoint.x >= len(grid) or newSandPoint.y >= len(grid[0]):
+            grid[currentSandPoint.x][currentSandPoint.y] = 'o'
+            sandCount += 1
+            break
+        elif newSandPoint == currentSandPoint:
+            grid[currentSandPoint.x][currentSandPoint.y] = 'o'
+            currentSandPoint = Point(sandStart.x, sandStart.y)
+            sandCount += 1
+        else:
+            currentSandPoint = newSandPoint
 
+    return sandCount
+
+def solve2(grid, sandStart):
+    newGrid, newSandStart = extendGridForPart2(grid, sandStart)
+    currentSandPoint = newSandStart
+    sandCount = 0
+    
+    while True:
+        newSandPoint = simulate(newGrid, currentSandPoint) 
+        if newSandPoint == newSandStart:
+            break
+        elif newSandPoint == currentSandPoint:
+            newGrid[currentSandPoint.x][currentSandPoint.y] = 'o'
+            currentSandPoint = Point(newSandStart.x, newSandStart.y)
+            sandCount += 1
+        else:
+            currentSandPoint = newSandPoint
+
+    return sandCount
+        
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         inputfile = open(sys.argv[1])
@@ -97,7 +161,10 @@ if __name__ == '__main__':
         inputfile = open('14.in')
 
     lines = [line.rstrip() for line in inputfile.readlines()]
-    grid, sandStart = parseGrid(lines)
-    debug(grid)
+    grid1, sandStart = parseGrid(lines)
+    grid2 = [[c for c in column] for column in grid1]
+
+    print(solve1(grid1, sandStart))
+    print(solve2(grid2, sandStart))
 
 
