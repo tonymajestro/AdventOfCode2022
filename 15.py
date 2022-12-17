@@ -4,9 +4,8 @@ import sys
 from collections import namedtuple
 from intervaltree import IntervalTree
 
-#ROW_TO_SEARCH = 2000000
+ROW_TO_SEARCH = 2000000
 BOUNDS = 4000000
-#BOUNDS = 20
 
 def manhattanDistance(sensor, beacon):
     return abs(sensor.x - beacon.x) + abs(sensor.y - beacon.y)
@@ -47,10 +46,8 @@ def solve2(sensorsAndBeacons):
             if beacon.y == row and 0 <= beacon.x <= BOUNDS:
                 intervals[beacon.x : beacon.x + 1] = (beacon.x, beacon.x + 1)
 
-        if row % 10000 == 0:
-            print(row)
         intervals.merge_overlaps()
-        intervalData = sorted([i.data for i in intervals])
+        intervalData = [(i.begin, i.end) for i in sorted(intervals)]
         for i in range(len(intervalData) - 1):
             currInterval, nextInterval = intervalData[i], intervalData[i + 1]
             if currInterval[1] != nextInterval[0]:
@@ -70,6 +67,6 @@ if __name__ == '__main__':
         sensorX, sensorY, beaconX, beaconY = int(split[2][2:-1]), int(split[3][2:-1]), int(split[8][2:-1]), int(split[9][2:])
         sensorsAndBeacons.append((Point(sensorX, sensorY), Point(beaconX, beaconY)))
     
-    #print(len(solve1(sensorsAndBeacons, ROW_TO_SEARCH)))
+    print(len(solve1(sensorsAndBeacons, ROW_TO_SEARCH)))
     print(solve2(sensorsAndBeacons))
 
